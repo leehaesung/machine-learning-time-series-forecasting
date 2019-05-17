@@ -40,7 +40,57 @@
 
 이 특정 예에서는 이전에 데이터에 따라 예측을 수행 하는 [LSTM 네트워크](https://en.wikipedia.org/wiki/Long_short-term_memory)를 사용했습니다  . 그러나 아래 그림과 같이 모형 예측을 약간 확대하면 모형이 실제로 무엇을하는지 알기 시작합니다.
 
-[이미지3](https://cdn-images-1.medium.com/max/1000/1*A-ubY-due4lcTEOgGSCvoQ.jpeg)
+![이미지3](https://cdn-images-1.medium.com/max/1000/1*A-ubY-due4lcTEOgGSCvoQ.jpeg)
 
-시계열 데이터는 시간에 상관되는 경향이 있으며 중요한 자동 상관 관계를 나타냅니다. 이 경우, 이는 시간 "t + 1" 에서의 인덱스가 시간 "t" 에서 인덱스에 매우 근접 할 가능성 이 있음을 의미합니다 . 위의 그림에서 오른쪽 그림에서와 같이 모델이 실제로 수행하는 작업은 시간 "t + 1" 에서 값을 예측할 때 단순히 시간 " t " 의 값을 예측으로 사용한다는 것입니다 (종종  지속성 모델 ). 는 C 플로팅 로스 상관  예측과 실제 값 사이를 (아래 그림), 우리는 모델이 단순히 미래에 대한 예측과 이전 값을 사용하는 것을 나타내는, 일일의 시간 지연에 명확한 피크를 참조하십시오.
+시계열 데이터는 시간에 상관되는 경향이 있으며 중요한 [자기상관관계](https://en.wikipedia.org/wiki/Autocorrelation)를 나타냅니다. 이 경우, 이는 시간 "t + 1" 에서의 인덱스가 시간 "t" 에서 인덱스에 매우 근접 할 가능성이 있음을 의미합니다. 위의 그림에서 오른쪽 그림에서와 같이 모델이 실제로 수행하는 작업은 시간 "t + 1" 에서 값을 예측할 때 단순히 시간 "t" 의 값을 예측으로 사용한다는 것입니다(종종  지속성 모델). 는 C 플로팅 [로스 상관](https://en.wikipedia.org/wiki/Cross-correlation) 예측과 실제 값 사이를 (아래 그림), 우리는 모델이 단순히 미래에 대한 예측과 이전 값을 사용하는 것을 나타내는, 일일의 시간 지연에 명확한 피크를 참조하십시오.
+
+![이미지4](https://cdn-images-1.medium.com/max/1000/1*4_LdgQFVtI8dHKYKYvFpNA.jpeg)
+
+### 부정확하게 사용하면 정확도 메트릭이 오도 될 수 있습니다.
+즉, 직접적으로 값을 예측할 수있는 능력을 기준으로 모델을 평가할 때 [평균 백분율 오차](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error) 및 [R2 점수](https://en.wikipedia.org/wiki/Coefficient_of_determination)와 같은 공통적 인 오차 척도는 모두 높은 예측 정확도를 나타냅니다. 그러나 예제 데이터는 무작위 도보 과정을 통해 생성되므로 모델은 향후 결과를 예측할 수 없습니다. 이는 일반적인 오류 메트릭스를 직접 계산하여 예측력을 모델링하는 것만으로도 오도 된 결과를 낳을 수 있다는 사실과 모델 정확성에 지나치게 자신감을 갖도록 속일 수 있다는 사실을 강조합니다.
+
+### 연속성 및 차분 시계열 데이터
+[고정 시계열](https://www.otexts.org/fpp/8/1) 그의 통계적 성질 등이다. [평균](https://en.wikipedia.org/wiki/Mean), [분산](https://en.wikipedia.org/wiki/Variance), [자기 상관](https://en.wikipedia.org/wiki/Autocorrelation) 등, 시간 경과에 모두 일정하다. 대부분의 통계 예측 방법은 시계열이 수학적 변형을 사용하여 거의 정지 상태 (즉, "고정 된 상태")로 렌더링 될 수 있다는 가정을 기반으로합니다. 이러한 기본 변환 중 하나는 아래그림과 같이 [데이터의 시차를 설정하는 것](https://www.otexts.org/fpp/8/1) 입니다.
+
+![이미지5](https://cdn-images-1.medium.com/max/1000/1*UzcA8R7Y8Evcwd5uRwuqEw.jpeg)
+
+이 변환은 색인을 직접 고려하기보다는 연속 된 시간 간격 의 차이  를 계산  합니다.
+
+가치 그 자체보다는 시간 단계 간의 가치 의 차이 를 예측하기위한 모델을 정의하는  것은 모델의 예측력을 훨씬 더 강력하게 테스트하는 것입니다. 이 경우 단순히 데이터에 강력한 자기 상관성이 있음을 단순히 사용할 수 없으며 "t + 1"에 대한 예측으로 시간 "t" 의 값을 사용합니다 . 이로 인해 모델에 대한 더 나은 테스트를 제공하고 교육 단계에서 유용한 것을 배웠는지, 그리고 과거 데이터를 분석하면 실제로 모델이 미래의 변화를 예측하는 데 도움이되는지 여부가 파악됩니다.
+
+### 시간 차분 데이터의 예측 모델
+데이터가 아닌 시간 차분 데이터를 직접 예측할 수 있기 때문에 모델의 예측 능력을 훨씬 더 강력하게 나타낼 수 있으므로 모델을 사용해 보겠습니다. 이 테스트의 결과는 아래 그림과 같이 실제 값과 예측 값의 분산 플롯을 보여줍니다.
+
+![](https://cdn-images-1.medium.com/max/1000/1*HeXMVb737QXHH1smBx3MUg.jpeg)
+
+이 수치는  데이터가 완전히 확률 론적 [랜덤워크 걸이 프로세스](https://en.wikipedia.org/wiki/Random_walk)를 사용하여 생성되기 때문에 모델이 과거 사건을 기반으로 미래의 변화를 예측할 수  없다는 것을 나타냅니다  . 확률 론적 과정 의 미래 결과를 예측할 수 있다는 것은   정의상 불가능하며, 누군가가 이것을 주장한다면, 조금 회의적이어야합니다 ...
+
+### 당신의 시계열은 무작위 도보입니까?
+당신의 시계열은 실제로 무작위 도보 일 수 있으며이를 확인하는 몇 가지 방법은 다음과 같습니다.
+* 시계열은 선형 또는 유사한 패턴으로 쇠퇴하는 강한 시간 종속성 (자기 상관)을 보여줍니다.
+* 시계열은 고정적이지 않고 고정되어있어 데이터에서 명백하게 학습 가능한 구조를 나타내지 않습니다.
+* 지속성 모델 (이전 시간 단계에서의 관찰을 다음 시간 단계에서 발생하는 것으로 사용)은 신뢰할 수있는 예측의 최상의 원천을 제공합니다.
+
+이 마지막 지점은 시계열 예측의 핵심입니다. [퍼시스턴스 모델](https://machinelearningmastery.com/persistence-time-series-forecasting-with-python/)을 사용한 기본 예측은 빠르게 향상시킬 수 있는지 여부를 나타냅니다. 할 수 없다면 아마 무작위 도보 (또는 그 근처)를 다룰 것입니다. 인간의 마음은 모든 곳에서 패턴을 찾기 위해 고정되어 있으며 우리는 무작위로 걷는 과정을 위해 정교한 모델을 개발함으로써 우리 자신을 속이고 시간을 낭비하지 않도록 경계해야합니다.
+
+저자 참고 사항 : 기사를 게시 한 후 Jason Brownlee의 무작위 산책 및 시간 시리즈와 유사한 주제의 멋진 기사를 알게되었습니다 . [Python으로 Times Series Forecasting을위한 랜덤워크.](https://machinelearningmastery.com/gentle-introduction-random-walk-times-series-forecasting-python/)
+
+### 개요
+이 기사를 통해 강조하고자하는 요점   은 예측 정확도 측면에서 모델 성능을 평가할 때 매우 신중 해야한다는 것입니다. 위의 예에서 볼 수 있듯이, 미래의 결과를 예측하는 것이 완전히 불가능한 완전히 무작위 인 프로세스 일지라도, 쉽게 속일 수 있습니다. 단순히 모델을 정의하고 예측을 수행하고 공통 정확도 메트릭을 계산하면 겉으로는 좋은 모델을 가지고이를 생산에 적용 할 수 있습니다. 반면에 실제로 모델에는 예측력이 전혀 없을 수도 있습니다.
+
+당신이 시계열 예측과 함께 일하고 있고, 아마도 당신 자신을 데이터 과학자라고 생각한다면, 나는 [과학자](https://en.wikipedia.org/wiki/Scientist) 측면에 대해서도 강조 할 것을 촉구합니다. 항상 데이터에 대해 회의적이며 비판적인 질문을하고 결코 성급한 결론을 내릴 수 없습니다. [과학적인 방법은](https://en.wikipedia.org/wiki/Scientific_method)  과학의 다른 종류로 데이터 과학에 적용되어야한다.
+
+[원본](https://towardsdatascience.com/how-not-to-use-machine-learning-for-time-series-forecasting-avoiding-the-pitfalls-19f9d7adf424). 허락을 받아 재 게시.
+
+Bio :  [Vegard Flovik](https://www.linkedin.com/in/vegard-flovik/) 은 리드 데이터 과학자입니다. Axbit AS의 기계 학습 및 고급 분석.
+
+
+자원:
+* [온라인 및 웹 기반 : 분석, 데이터 마이닝, 데이터 과학, 기계 학습 교육](https://www.kdnuggets.com/education/online.html)
+* [분석, 데이터 과학, 데이터 마이닝 및 기계 학습을위한 소프트웨어](https://www.kdnuggets.com/software/index.html)
+
+관련 항목 :
+* [간단한 신경 회로망 및 LSTM을 이용한 시계열 예측 소개](https://www.kdnuggets.com/2019/04/introduction-time-series-forecasting-simple-neural-networks-lstm.html)
+* [자동화 된 기계 학습을 통한 시계열 분석 가속화](https://www.kdnuggets.com/2019/02/datarobot-accelerating-time-series-analysis-automated-machine-learning.html)
+* [예측 정확도를 향상시키기 위해 모델 학습을 미세 조정하는 방법](https://www.kdnuggets.com/2019/01/fine-tune-machine-learning-models-forecasting.html)
 
