@@ -16,3 +16,6 @@
 ### 시계열 예측을위한 기계 학습 모델
 시계열 예측에 사용할 수있는 모델에는 여러 가지 유형이 있습니다. 이 특정 예에서는 Long 단기 메모리 네트워크를 사용하거나 짧은 시간 내에  [LSTM 네트워크](https://en.wikipedia.org/wiki/Long_short-term_memory) 를 사용했습니다.이 네트워크는 이전 시간의 데이터에 따라 예측을 수행하는 특수한 종류의 신경 네트워크입니다. 언어 인식, 시계열 분석 및 기타 많은 분야에서 널리 사용됩니다. 그러나 제 경험에 따르면 단순한 유형의 모델은 실제로 많은 경우 정확한 예측을 제공합니다. [랜덤 포레스트](https://en.wikipedia.org/wiki/Random_forest) ,  [그레디언트 부스트 회귀 변수](https://en.wikipedia.org/wiki/Gradient_boosting) 및 [시간 지연 신경망](https://en.wikipedia.org/wiki/Time_delay_neural_network) 과  같은 모델 사용 , 시간 정보는 입력에 추가되는 지연 집합을 통해 포함될 수 있으므로 데이터는 다른 시점에서 나타납니다. TDNN은 순차적 인 특성으로 인해 [반복적 인 신경망](https://en.wikipedia.org/wiki/Recurrent_neural_network)  대신  [피드 포워드 신경망으로](https://en.wikipedia.org/wiki/Feedforward_neural_network) 구현됩니다  .
 
+### 오픈 소스 소프트웨어 라이브러리를 사용하여 모델을 구현하는 방법
+나는 일반적으로 사용하는 모델의 내 신경 네트워크 유형을 정의  Keras 높은 수준의 신경 네트워크 API입니다, 파이썬으로 작성된와의 상단에 실행할 수 TensorFlow,  CNTK , 또는  Theano을 모델의 다른 유형의 난 보통 사용 Scikit-Learn 무료 소프트웨어 기계학습 라이브러리인, 다양한 기능 분류, 회귀및 클러스터링을 포함하여 알고리즘 서포트벡터머신, 랜덤포레스트, [그레디언트 부스팅](https://en.wikipedia.org/wiki/Gradient_boosting),  [K-means](https://en.wikipedia.org/wiki/K-means_clustering) 및 [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN)을 Python 숫자 및 과학 라이브러리 인 NumPy 및 SciPy 와 상호 작용하도록 설계되었습니다.
+
